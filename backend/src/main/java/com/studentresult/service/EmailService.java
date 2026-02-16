@@ -174,4 +174,86 @@ public class EmailService {
                 return "#EF4444";
         }
     }
+    
+    public void sendStudentUpdateNotification(String toEmail, String studentName) {
+        if (!emailEnabled) {
+            logger.info("Email disabled. Would send update notification to: {}", toEmail);
+            return;
+        }
+        
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            
+            helper.setFrom(fromEmail);
+            helper.setTo(toEmail);
+            helper.setSubject("Your Profile Information Has Been Updated");
+            
+            String htmlContent = "<html><body style='font-family: Arial, sans-serif;'>" +
+                "<div style='max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5;'>" +
+                "<div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px; text-align: center;'>" +
+                "<h1 style='color: white; margin: 0;'>✏️ Profile Updated</h1>" +
+                "</div>" +
+                "<div style='background: white; padding: 30px; margin-top: 20px; border-radius: 10px;'>" +
+                "<h2 style='color: #333;'>Hello, " + studentName + "!</h2>" +
+                "<p style='color: #666; font-size: 16px;'>Your profile information has been updated successfully.</p>" +
+                "<div style='background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10B981;'>" +
+                "<p style='color: #166534; margin: 0;'>✓ If you did not request this change, please contact the administration immediately.</p>" +
+                "</div>" +
+                "<p style='color: #666;'>Login to view your updated information: <a href='http://localhost:3000' style='color: #7C3AED;'>Student Portal</a></p>" +
+                "</div>" +
+                "<div style='text-align: center; padding: 20px; color: #999; font-size: 12px;'>" +
+                "<p>© 2024 Student Result Management System. All rights reserved.</p>" +
+                "</div>" +
+                "</div>" +
+                "</body></html>";
+            
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+            logger.info("Update notification sent successfully to: {}", toEmail);
+        } catch (MessagingException e) {
+            logger.error("Failed to send update notification to: {}", toEmail, e);
+        }
+    }
+    
+    public void sendTeacherUpdateNotification(String toEmail, String teacherName) {
+        if (!emailEnabled) {
+            logger.info("Email disabled. Would send update notification to: {}", toEmail);
+            return;
+        }
+        
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            
+            helper.setFrom(fromEmail);
+            helper.setTo(toEmail);
+            helper.setSubject("Your Profile Information Has Been Updated");
+            
+            String htmlContent = "<html><body style='font-family: Arial, sans-serif;'>" +
+                "<div style='max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5;'>" +
+                "<div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px; text-align: center;'>" +
+                "<h1 style='color: white; margin: 0;'>✏️ Profile Updated</h1>" +
+                "</div>" +
+                "<div style='background: white; padding: 30px; margin-top: 20px; border-radius: 10px;'>" +
+                "<h2 style='color: #333;'>Hello, " + teacherName + "!</h2>" +
+                "<p style='color: #666; font-size: 16px;'>Your profile information has been updated successfully.</p>" +
+                "<div style='background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10B981;'>" +
+                "<p style='color: #166534; margin: 0;'>✓ If you did not request this change, please contact the administration immediately.</p>" +
+                "</div>" +
+                "<p style='color: #666;'>Login to view your updated information: <a href='http://localhost:3000' style='color: #7C3AED;'>Teacher Portal</a></p>" +
+                "</div>" +
+                "<div style='text-align: center; padding: 20px; color: #999; font-size: 12px;'>" +
+                "<p>© 2024 Student Result Management System. All rights reserved.</p>" +
+                "</div>" +
+                "</div>" +
+                "</body></html>";
+            
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+            logger.info("Update notification sent successfully to: {}", toEmail);
+        } catch (MessagingException e) {
+            logger.error("Failed to send update notification to: {}", toEmail, e);
+        }
+    }
 }

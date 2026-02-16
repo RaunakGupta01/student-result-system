@@ -546,6 +546,8 @@ function AdminDashboard() {
 // Teachers Management
 function TeachersManagement() {
   const [teachers, setTeachers] = useState([]);
+  const [filteredTeachers, setFilteredTeachers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState(null);
   const [formData, setFormData] = useState({
@@ -565,9 +567,22 @@ function TeachersManagement() {
     try {
       const response = await api.getAllTeachers();
       setTeachers(response.data);
+      setFilteredTeachers(response.data);
     } catch (err) {
       console.error('Error loading teachers:', err);
     }
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const filtered = teachers.filter(teacher =>
+      teacher.name.toLowerCase().includes(query.toLowerCase()) ||
+      teacher.teacherId.toLowerCase().includes(query.toLowerCase()) ||
+      teacher.email.toLowerCase().includes(query.toLowerCase()) ||
+      teacher.department.toLowerCase().includes(query.toLowerCase()) ||
+      teacher.phone.includes(query)
+    );
+    setFilteredTeachers(filtered);
   };
 
   const handleSubmit = async (e) => {
@@ -630,7 +645,17 @@ function TeachersManagement() {
 
       <div className="content-card">
         <div className="card-header">
-          <h2 className="card-title">All Teachers</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+            <h2 className="card-title">All Teachers</h2>
+            <input
+              type="text"
+              className="form-input"
+              placeholder="Search by name, ID, email, department..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              style={{ flex: 1, maxWidth: '300px' }}
+            />
+          </div>
           <button className="btn-primary" onClick={() => setShowModal(true)}>
             <Plus size={18} />
             Add Teacher
@@ -649,7 +674,7 @@ function TeachersManagement() {
             </tr>
           </thead>
           <tbody>
-            {teachers.map((teacher) => (
+            {filteredTeachers.map((teacher) => (
               <tr key={teacher.id}>
                 <td><span className="badge info">{teacher.teacherId}</span></td>
                 <td>{teacher.name}</td>
@@ -770,6 +795,8 @@ function TeachersManagement() {
 // Students Management (similar pattern)
 function StudentsManagement() {
   const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [formData, setFormData] = useState({
@@ -792,9 +819,22 @@ function StudentsManagement() {
     try {
       const response = await api.getAllStudents();
       setStudents(response.data);
+      setFilteredStudents(response.data);
     } catch (err) {
       console.error('Error loading students:', err);
     }
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const filtered = students.filter(student =>
+      student.name.toLowerCase().includes(query.toLowerCase()) ||
+      student.rollNo.toLowerCase().includes(query.toLowerCase()) ||
+      student.className.toLowerCase().includes(query.toLowerCase()) ||
+      student.email.toLowerCase().includes(query.toLowerCase()) ||
+      student.phone.includes(query)
+    );
+    setFilteredStudents(filtered);
   };
 
   const handleSubmit = async (e) => {
@@ -819,7 +859,9 @@ function StudentsManagement() {
         await api.deleteStudent(id);
         loadStudents();
       } catch (err) {
-        alert('Error deleting student');
+        console.error('Delete error:', err);
+        const errorMsg = typeof err.response?.data === 'string' ? err.response.data : (err.response?.data?.message || err.message || 'Error deleting student');
+        alert(errorMsg);
       }
     }
   };
@@ -863,7 +905,17 @@ function StudentsManagement() {
 
       <div className="content-card">
         <div className="card-header">
-          <h2 className="card-title">All Students</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+            <h2 className="card-title">All Students</h2>
+            <input
+              type="text"
+              className="form-input"
+              placeholder="Search by name, roll number, class, email..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              style={{ flex: 1, maxWidth: '300px' }}
+            />
+          </div>
           <button className="btn-primary" onClick={() => setShowModal(true)}>
             <Plus size={18} />
             Add Student
@@ -882,7 +934,7 @@ function StudentsManagement() {
             </tr>
           </thead>
           <tbody>
-            {students.map((student) => (
+            {filteredStudents.map((student) => (
               <tr key={student.id}>
                 <td><span className="badge success">{student.rollNo}</span></td>
                 <td>{student.name}</td>
@@ -1038,7 +1090,9 @@ function StudentsManagement() {
 // Subjects Management
 function SubjectsManagement() {
   const [subjects, setSubjects] = useState([]);
+  const [filteredSubjects, setFilteredSubjects] = useState([]);
   const [teachers, setTeachers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingSubject, setEditingSubject] = useState(null);
   const [formData, setFormData] = useState({
@@ -1059,9 +1113,20 @@ function SubjectsManagement() {
     try {
       const response = await api.getAllSubjects();
       setSubjects(response.data);
+      setFilteredSubjects(response.data);
     } catch (err) {
       console.error('Error loading subjects:', err);
     }
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const filtered = subjects.filter(subject =>
+      subject.subjectName.toLowerCase().includes(query.toLowerCase()) ||
+      subject.subjectCode.toLowerCase().includes(query.toLowerCase()) ||
+      subject.className.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredSubjects(filtered);
   };
 
   const loadTeachers = async () => {
@@ -1095,7 +1160,9 @@ function SubjectsManagement() {
         await api.deleteSubject(id);
         loadSubjects();
       } catch (err) {
-        alert('Error deleting subject');
+        console.error('Delete error:', err);
+        const errorMsg = typeof err.response?.data === 'string' ? err.response.data : (err.response?.data?.message || err.message || 'Error deleting subject');
+        alert(errorMsg);
       }
     }
   };
@@ -1133,7 +1200,17 @@ function SubjectsManagement() {
 
       <div className="content-card">
         <div className="card-header">
-          <h2 className="card-title">All Subjects</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+            <h2 className="card-title">All Subjects</h2>
+            <input
+              type="text"
+              className="form-input"
+              placeholder="Search by subject name, code, class..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              style={{ flex: 1, maxWidth: '300px' }}
+            />
+          </div>
           <button className="btn-primary" onClick={() => setShowModal(true)}>
             <Plus size={18} />
             Add Subject
@@ -1153,7 +1230,7 @@ function SubjectsManagement() {
             </tr>
           </thead>
           <tbody>
-            {subjects.map((subject) => (
+            {filteredSubjects.map((subject) => (
               <tr key={subject.id}>
                 <td><span className="badge warning">{subject.subjectCode}</span></td>
                 <td>{subject.subjectName}</td>

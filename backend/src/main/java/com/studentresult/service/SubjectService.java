@@ -4,6 +4,7 @@ import com.studentresult.model.Subject;
 import com.studentresult.model.Teacher;
 import com.studentresult.repository.SubjectRepository;
 import com.studentresult.repository.TeacherRepository;
+import com.studentresult.repository.ResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,9 @@ public class SubjectService {
     
     @Autowired
     private TeacherRepository teacherRepository;
+    
+    @Autowired
+    private ResultRepository resultRepository;
     
     public List<Subject> getAllSubjects() {
         return subjectRepository.findAll();
@@ -59,6 +63,12 @@ public class SubjectService {
     }
     
     public void deleteSubject(Long id) {
+        if (!subjectRepository.existsById(id)) {
+            throw new RuntimeException("Subject not found");
+        }
+        // Delete all results associated with this subject first
+        resultRepository.deleteAll(resultRepository.findBySubjectId(id));
+        // Now delete the subject
         subjectRepository.deleteById(id);
     }
 }

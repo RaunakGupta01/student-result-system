@@ -2,6 +2,7 @@ package com.studentresult.service;
 
 import com.studentresult.model.Student;
 import com.studentresult.repository.StudentRepository;
+import com.studentresult.repository.ResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,9 @@ public class StudentService {
     
     @Autowired
     private StudentRepository studentRepository;
+    
+    @Autowired
+    private ResultRepository resultRepository;
     
     @Autowired
     private EmailService emailService;
@@ -66,6 +70,9 @@ public class StudentService {
         }
         
         Student updatedStudent = existingStudent.get();
+        String studentEmail = updatedStudent.getEmail();
+        String studentName = student.getName() != null ? student.getName() : updatedStudent.getName();
+        
         updatedStudent.setName(student.getName());
         updatedStudent.setEmail(student.getEmail());
         updatedStudent.setPhone(student.getPhone());
@@ -78,13 +85,26 @@ public class StudentService {
             updatedStudent.setPassword(student.getPassword());
         }
         
-        return studentRepository.save(updatedStudent);
+        Student saved = studentRepository.save(updatedStudent);
+        
+        // Send update notification email
+        try {
+            emailService.sendStudentUpdateNotification(studentEmail, studentName);
+        } catch (Exception e) {
+            // Email failed but student was updated
+            System.out.println("Failed to send update email: " + e.getMessage());
+        }
+        
+        return saved;
     }
     
     public void deleteStudent(Long id) {
         if (!studentRepository.existsById(id)) {
             throw new RuntimeException("Student not found");
         }
+        // Delete all results associated with this student first
+        resultRepository.deleteAll(resultRepository.findByStudentId(id));
+        // Now delete the student
         studentRepository.deleteById(id);
     }
 }

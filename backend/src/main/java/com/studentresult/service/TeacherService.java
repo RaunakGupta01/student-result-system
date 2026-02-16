@@ -62,6 +62,9 @@ public class TeacherService {
         }
         
         Teacher updatedTeacher = existingTeacher.get();
+        String teacherEmail = updatedTeacher.getEmail();
+        String teacherName = teacher.getName() != null ? teacher.getName() : updatedTeacher.getName();
+        
         updatedTeacher.setName(teacher.getName());
         updatedTeacher.setEmail(teacher.getEmail());
         updatedTeacher.setPhone(teacher.getPhone());
@@ -71,7 +74,17 @@ public class TeacherService {
             updatedTeacher.setPassword(teacher.getPassword());
         }
         
-        return teacherRepository.save(updatedTeacher);
+        Teacher saved = teacherRepository.save(updatedTeacher);
+        
+        // Send update notification email
+        try {
+            emailService.sendTeacherUpdateNotification(teacherEmail, teacherName);
+        } catch (Exception e) {
+            // Email failed but teacher was updated
+            System.out.println("Failed to send update email: " + e.getMessage());
+        }
+        
+        return saved;
     }
     
     public void deleteTeacher(Long id) {
