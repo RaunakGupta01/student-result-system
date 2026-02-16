@@ -650,7 +650,41 @@ npm test
 
 ## 🌐 Deployment
 
-### **Backend (Spring Boot)**
+### **Quick Start with Docker** 🐳
+
+The easiest way to deploy the entire application:
+
+```bash
+# Clone the repository
+git clone https://github.com/RaunakGupta01/student-result-system.git
+cd student-result-system
+
+# Copy environment template
+cp .env.example .env
+
+# Edit configuration (optional)
+nano .env
+
+# Build and run with Docker Compose
+docker-compose up --build
+```
+
+**Access the application:**
+- Frontend: http://localhost
+- Backend API: http://localhost:8080/api
+- Database: localhost:3306
+
+### **Docker Components**
+
+The `docker-compose.yml` includes:
+- 🐬 **MySQL Database** - Persistent volume storage
+- 🍃 **Spring Boot Backend** - Multi-stage build optimization
+- ⚛️ **React Frontend** - Nginx reverse proxy with gzip compression
+- 🔗 **Service Networking** - Automatic service discovery
+
+### **Manual Deployment**
+
+#### **Backend (Spring Boot)**
 
 ```bash
 # Build JAR
@@ -658,35 +692,59 @@ cd backend
 mvn clean package
 
 # Run JAR
-java -jar target/student-result-management-0.0.1-SNAPSHOT.jar
+java -jar target/student-result-management-1.0.0.jar
 ```
 
-### **Frontend (React)**
+#### **Frontend (React)**
 
 ```bash
-# Build production
+# Install and build
 cd frontend
+npm install
 npm run build
 
-# Serve with nginx or Apache
+# Serve production build
+npm start
 ```
 
-### **Docker Deployment (Optional)**
+### **Advanced Deployment Options**
 
-```dockerfile
-# Backend Dockerfile
-FROM openjdk:17-jdk-slim
-COPY target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+For detailed deployment guides, see [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md):
 
-# Frontend Dockerfile
-FROM node:16-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+- **DigitalOcean App Platform** - 1-click deployment
+- **AWS with EC2** - Scalable deployment
+- **Docker Swarm** - Multi-node orchestration
+- **Kubernetes** - Production-grade scaling
+
+### **Environment Variables**
+
+```env
+# Database
+DB_ROOT_PASSWORD=tiger
+DB_NAME=student_result_db
+DB_USER=root
+DB_PASSWORD=tiger
+
+# Email (Gmail)
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+EMAIL_ENABLED=true
+
+# Ports
+BACKEND_PORT=8080
+FRONTEND_PORT=80
 ```
+
+### **Production Checklist**
+
+- ✅ Update database credentials
+- ✅ Configure email settings (Gmail App Password)
+- ✅ Enable HTTPS/SSL
+- ✅ Set up automated backups
+- ✅ Configure monitoring and logging
+- ✅ Update CORS allowed origins
+- ✅ Enable health checks
+- ✅ Set resource limits
 
 ---
 

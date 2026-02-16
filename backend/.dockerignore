@@ -1,0 +1,12 @@
+target/
+.git/
+.gitignore
+.maven/
+.classpath
+.project
+.settings/
+*.log
+*.swp
+*.swo
+*~
+.DS_Store
