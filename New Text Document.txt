@@ -1,0 +1,76 @@
+-- Show all databases
+SHOW DATABASES;
+
+-- Use the student result database
+USE student_result_db;
+
+-- Show all tables
+SHOW TABLES;
+
+-- Check admin user (default: admin/admin123)
+SELECT * FROM admins;
+
+-- Check all teachers
+SELECT * FROM teachers;
+
+-- Check all students
+SELECT * FROM students;
+
+-- Check all subjects
+SELECT * FROM subjects;
+
+-- Check all results
+SELECT * FROM results;
+
+-- Exit MySQL
+EXIT;
+
+-- Count records in each table
+SELECT 'Teachers' as TableName, COUNT(*) as Count FROM teachers
+UNION ALL
+SELECT 'Students', COUNT(*) FROM students
+UNION ALL
+SELECT 'Subjects', COUNT(*) FROM subjects
+UNION ALL
+SELECT 'Results', COUNT(*) FROM results;
+
+-- View students with their results
+SELECT 
+    s.name AS student_name,
+    s.roll_no,
+    sub.subject_name,
+    r.marks_obtained,
+    sub.total_marks,
+    r.grade,
+    r.exam_type
+FROM results r
+JOIN students s ON r.student_id = s.id
+JOIN subjects sub ON r.subject_id = sub.id;
+
+-- View subjects with assigned teachers
+SELECT 
+    sub.subject_code,
+    sub.subject_name,
+    sub.class_name,
+    t.name AS teacher_name,
+    t.teacher_id
+FROM subjects sub
+LEFT JOIN teachers t ON sub.teacher_id = t.id;
+
+-- Check total students per class
+SELECT class_name, section, COUNT(*) as student_count
+FROM students
+GROUP BY class_name, section;
+```
+
+---
+
+## 🎯 What Should Be There Initially
+
+**After starting the app (before adding data):**
+```
+admins     → 1 row  (admin/admin123)
+teachers   → 0 rows
+students   → 0 rows
+subjects   → 0 rows
+results    → 0 rows
